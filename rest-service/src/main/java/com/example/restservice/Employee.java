@@ -1,6 +1,7 @@
 package com.example.restservice;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name="employees")
@@ -10,9 +11,17 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer employee_id;
 
+    // Annotations validating manually input fields
+    @NotBlank(message = "first_Name must not be null or empty")
     private String first_Name;
+
+    @NotBlank(message = "last_Name must not be null or empty")
     private String last_Name;
+
+    @NotBlank(message = "email must not be null or empty")
     private String email;
+
+    @NotBlank(message = "title must not be null or empty")
     private String title;
 
     // Explicit default constructor required for JPA reflection

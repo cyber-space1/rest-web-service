@@ -1,5 +1,6 @@
 package com.example.restservice;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> addEmployee(@RequestBody Employee employee){
+    public ResponseEntity<Object> addEmployee(@Valid @RequestBody Employee employee){
         Employee newEmployee = employeeManager.addEmployee(employee);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
