@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository // Acts as bridge between database layer and business layer
 public class EmployeeManager {
@@ -14,7 +15,7 @@ public class EmployeeManager {
         this.employeeRepository = employeeRepository;
     }
 
-    private static Employees employees = new Employees();
+    // private static Employees employees = new Employees();
 
     // Sample employees
 //    static {
@@ -37,5 +38,23 @@ public class EmployeeManager {
 
     public Employee addEmployee(Employee employee) {
         return employeeRepository.save(employee);
+    }
+
+    public Optional<Employee> updateEmployee(Integer id, Employee updatedData) {
+        return employeeRepository.findById(id).map(existingEmployee -> {
+            existingEmployee.setFirst_Name(updatedData.getFirst_Name());
+            existingEmployee.setLast_Name(updatedData.getLast_Name());
+            existingEmployee.setEmail(updatedData.getEmail());
+            existingEmployee.setTitle(updatedData.getTitle());
+            return employeeRepository.save(existingEmployee);
+        });
+    }
+
+    public boolean deleteEmployee(Integer id) {
+        if (!employeeRepository.existsById(id)) {
+            return false;
+        }
+        employeeRepository.deleteById(id);
+        return true;
     }
 }
