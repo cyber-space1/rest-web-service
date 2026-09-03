@@ -1,11 +1,22 @@
 package com.example.restservice;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="employees")
 public class Employee {
+    // Annotations defining the primary key
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer employee_id;
+
     private String first_Name;
     private String last_Name;
     private String email;
     private String title;
+
+    // Explicit default constructor required for JPA reflection
+    public Employee() {}
 
     public Employee (Integer employee_id, String first_Name, String last_Name, String email, String title){
         this.employee_id = employee_id;

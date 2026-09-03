@@ -1,5 +1,6 @@
 package com.example.restservice;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,14 @@ class RestServiceApplicationTests {
 
 	@Autowired
 	private EmployeeManager employeeManager;
+
+	@Autowired
+	private EmployeeRepository employeeRepository;
+
+	@BeforeEach
+	void cleanDB() {
+		employeeRepository.deleteAll();
+	}
 
 	@Test
 	void employeeGettersAndSetter() {
@@ -63,27 +72,30 @@ class RestServiceApplicationTests {
 
 	@Test
 	void employeeManagerGetsAllAndAdds() {
-		EmployeeManager employeeManager = new EmployeeManager();
-		int initialLength = employeeManager.getAllEmployees().getEmployeeList().size();
-		Employee employee1 = new Employee(1, "First","Employee","test@gmail.com","tester");
+		Employee employee1 = new Employee(null, "First","Employee","test@gmail.com","tester");
+		Employee employee2 = new Employee(null, "Second","Employee","test2@gmail.com","tester");
 
 		employeeManager.addEmployee(employee1);
+		employeeManager.addEmployee(employee2);
 
-		List<Employee> employeeList = employeeManager.getAllEmployees().getEmployeeList();
-		assert(employeeList.contains(employee1));
-		assert(employeeList.size() == initialLength + 1);
+		Employees employeeList = employeeManager.getAllEmployees();
+		assert(employeeList.getEmployeeList().size() == 2);
 	}
 
 	@Test
-	void employeeControllerGetFullList() {
-		// needs mock HTTP request
+	void employeeControllerAddAndGet() {
+		// Needs mock HTTP request
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-		Employee employee1 = new Employee(1, "First","Employee","test@gmail.com","tester");
-		employeeController.addEmployee(employee1);
+		Employee employee1 = new Employee(null, "First","Employee","test@gmail.com","tester");
 
-		assert(employeeController.getEmployees().getEmployeeList().contains(employee1));
+		var response = employeeController.addEmployee(employee1);
+		assert(response.getStatusCode().value() == 201);
+
+		Employees employeeList = employeeController.getEmployees();
+		assert(employeeList.getEmployeeList().size() == 1);
+		assert(employeeList.getEmployeeList().getFirst().getFirst_Name().equals("First"));
 	}
 
 	@Test
@@ -91,4 +103,9 @@ class RestServiceApplicationTests {
 		Employee employee1 = new Employee(1, "First","Employee","test@gmail.com","tester");
 		assert(employee1.toString().equals("Employee [id=1, firstName=First, lastName=Employee, email=test@gmail.com]"));
 	}
+
+//	@Test
+//	void testControllerAddAndGet() {
+//
+//	}
 }
